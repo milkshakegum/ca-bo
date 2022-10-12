@@ -1,49 +1,56 @@
-// The three.js scene: the 3D world where you put objects
-const scene = new THREE.Scene();
-
-// The camera
-const camera = new THREE.PerspectiveCamera(
-  60,
-  window.innerWidth / window.innerHeight,
-  1,
-  10000
-);
-
-// The renderer: something that draws 3D objects onto the canvas
-const renderer = new THREE.WebGLRenderer({ antialias: true });
-renderer.setSize(window.innerWidth, window.innerHeight);
-renderer.setClearColor(0xaaaaaa, 1);
-// Append the renderer canvas into <body>
-document.body.appendChild(renderer.domElement);
-
-
-// A cube we are going to animate
-const cube = {
-  // The geometry: the shape & size of the object
-  geometry: new THREE.BoxGeometry(1, 1, 1),
-  // The material: the appearance (color, texture) of the object
-  material: new THREE.MeshBasicMaterial({ color: 0x00ff00 })
+var TxtRotate = function(el, toRotate, period) {
+  this.toRotate = toRotate;
+  this.el = el;
+  this.loopNum = 0;
+  this.period = parseInt(period, 10) || 2000;
+  this.txt = '';
+  this.tick();
+  this.isDeleting = false;
 };
 
-// The mesh: the geometry and material combined, and something we can directly add into the scene (I had to put this line outside of the object literal, so that I could use the geometry and material properties)
-cube.mesh = new THREE.Mesh(cube.geometry, cube.material);
+TxtRotate.prototype.tick = function() {
+  var i = this.loopNum % this.toRotate.length;
+  var fullTxt = this.toRotate[i];
 
-// Add the cube into the scene
-scene.add(cube.mesh);
+  if (this.isDeleting) {
+    this.txt = fullTxt.substring(0, this.txt.length - 1);
+  } else {
+    this.txt = fullTxt.substring(0, this.txt.length + 1);
+  }
 
-// Make the camera further from the cube so we can see it better
-camera.position.z = 5;
+  this.el.innerHTML = '<span class="wrap">'+this.txt+'</span>';
 
-function render() {
-  // Render the scene and the camera
-  renderer.render(scene, camera);
+  var that = this;
+  var delta = 300 - Math.random() * 100;
 
-  // Rotate the cube every frame
-  cube.mesh.rotation.x += 0.05;
-  cube.mesh.rotation.y -= 0.05;
+  if (this.isDeleting) { delta /= 2; }
 
-  // Make it call the render() function about every 1/60 second
-  requestAnimationFrame(render);
-}
+  if (!this.isDeleting && this.txt === fullTxt) {
+    delta = this.period;
+    this.isDeleting = true;
+  } else if (this.isDeleting && this.txt === '') {
+    this.isDeleting = false;
+    this.loopNum++;
+    delta = 500;
+  }
 
-render();
+  setTimeout(function() {
+    that.tick();
+  }, delta);
+};
+
+window.onload = function() {
+  var elements = document.getElementsByClassName('txt-rotate');
+  for (var i=0; i<elements.length; i++) {
+    var toRotate = elements[i].getAttribute('data-rotate');
+    var period = elements[i].getAttribute('data-period');
+    if (toRotate) {
+      new TxtRotate(elements[i], JSON.parse(toRotate), period);
+    }
+  }
+  // INJECT CSS
+  var css = document.createElement("style");
+  css.type = "text/css";
+  css.innerHTML = ".txt-rotate > .wrap { border-right: 0.08em solid #666 }";
+  document.body.appendChild(css);
+};

@@ -1,13 +1,47 @@
-/* I did this so that the canvas can fit the window */
-html, body {
-	overflow: hidden;
-	user-select: none;
-  padding: 0;
-  margin: 0;
+body {
+  font-family: 'Red Hat Display', sans-serif;
+  padding: 3em 2em;
+  font-size: 18px;
+  background-color: #4455BB;
+  color: #fff;
+  text-align: left;
+  mix-blend-mode: multiply;
 }
 
-canvas {
-	width: 100%; 
-	height: 100%;
-	padding: 0;
+h1,h2 {
+  font-weight: 400;
+  margin: 0.4em 0;
 }
+
+h1 { 
+  font-size: 5em;
+  text-transform: uppercase; 
+}
+
+h2 {
+  font-size: 2em;
+}
+
+
+.txt-rotate {
+  width: 1326px;
+  height: 115px;
+  overflow: visible;
+  font-size: 96px;
+  letter-spacing: 0px;
+  line-height: 1.2;
+  text-align: left;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
